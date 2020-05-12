@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-container">
+        <div class="layui-box">
+            <div class="layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="begin" placeholder="开始日期">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="end" placeholder="结束日期">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table id="table" lay-filter="table"></table>
+        </div>
+    </div>
+</div>
+</body>
+<script src="layui/layui.js"></script>
+<script>
+    layui.use(['layer', 'form','table','laydate','jquery'], function(layer,form,table,laydate,$){
+
+        laydate.render({
+            elem: '#begin'
+        });
+        laydate.render({
+            elem: '#end'
+        });
+        $.ajax({
+            method:'post'
+            ,url:'/getData'
+            ,data:{begin:begin,end:end}
+        })
+    });
+</script>
+</html>

@@ -15,6 +15,5 @@ Route::get('think', function () {
 
 Route::get('hello/:name', 'index/hello');
 
-return [
+Route::post('getData', 'index/hello');
 
-];
