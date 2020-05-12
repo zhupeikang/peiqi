@@ -9,40 +9,80 @@
 <div class="layui-fluid">
     <div class="layui-container">
         <div class="layui-box">
-            <div class="layui-form">
+            <div class="layui-form" style="margin: 20px">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="begin" placeholder="开始日期">
+                            <input type="text" class="layui-input" id="begin" name="begin" placeholder="开始日期">
                         </div>
                     </div>
                     <div class="layui-inline">
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="end" placeholder="结束日期">
+                            <input type="text" class="layui-input" id="end" name="end" placeholder="结束日期">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <button class="layui-btn layui-btn-primary" lay-submit lay-filter="search"><i
+                                    class="layui-icon layui-icon-search"></i></button>
+                            <button class="layui-btn  layui-btn-primary" type="reset"><i
+                                    class="layui-icon layui-icon-close"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
-            <table id="table" lay-filter="table"></table>
+
         </div>
+        <table id="table" lay-filter="table"></table>
     </div>
 </div>
 </body>
 <script src="layui/layui.js"></script>
 <script>
-    layui.use(['layer', 'form','table','laydate','jquery'], function(layer,form,table,laydate,$){
+    layui.use(['layer', 'form', 'table', 'laydate', 'jquery'], function (layer, form, table, laydate, $) {
 
         laydate.render({
             elem: '#begin'
+            , value: new Date()
+            , isInitValue: true
         });
         laydate.render({
             elem: '#end'
+            , value: new Date()
         });
-        $.ajax({
-            method:'post'
-            ,url:'/getData'
-            ,data:{begin:begin,end:end}
-        })
+        form.on('submit(search)', function (data) {
+            $.ajax({
+                method: 'get'
+                , url: '/getData'
+                , data: data.field
+                , beforeSend: function () {
+                    layer.load(2);
+                }
+                , success: function (res) {
+                    if (res.code == 0) {
+                        layer.close(layer.index)
+                        table.render({
+                            elem: '#table'
+                            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                            , defaultToolbar: ['filter', 'exports', 'print']
+                            , title: '销售统计'
+                            , cols: [[
+                                {type: 'checkbox', fixed: 'left'}
+                                , {field: 'product_name', title: '衣服名称'}
+                                , {field: 'quantity', title: '销售数量',sort:true}
+                            ]]
+                            , data: res.productQuantity
+                        });
+
+                    } else {
+                        layer.msg(res.msg)
+                    }
+                }
+            })
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+
     });
 </script>
 </html>
